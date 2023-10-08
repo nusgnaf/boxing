@@ -38,7 +38,7 @@ ENV RAILS_MASTER_KEY $RAILS_MASTER_KEY
 
 <%- if packages.select(&:runtime?).any? -%>
 RUN apk add --no-cache <%= packages.select(&:runtime?).join(' ') %> yarn
-
+RUN apk add curl
 <%- end -%>
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 
