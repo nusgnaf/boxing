@@ -3,6 +3,7 @@ ARG RUBY_VERSION=<%= RUBY_VERSION %>
 <%- if config.assets_precompile -%>ARG NODE_VERSION=<%= node_version %><%- end -%>
 
 FROM ruby:${RUBY_VERSION}-alpine AS base
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 ARG APP_ROOT
 
 RUN apk add --no-cache <%= packages.select(&:build?).join(' ') %>
@@ -13,6 +14,7 @@ COPY Gemfile Gemfile.lock ${APP_ROOT}/
 WORKDIR ${APP_ROOT}
 RUN gem install bundler:<%= Bundler::VERSION %> \
     && bundle config --local deployment 'true' \
+    && bundle config set --global mirror.https://rubygems.org https://gems.ruby-china.com \
     && bundle config --local frozen 'true' \
     && bundle config --local no-cache 'true' \
     && bundle config --local without 'development test' \
@@ -53,6 +55,7 @@ RUN bundle exec rake assets:precompile
 
 <%- end -%>
 FROM ruby:${RUBY_VERSION}-alpine
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 ARG APP_ROOT
 
 <%- if packages.select(&:runtime?).any? -%>
