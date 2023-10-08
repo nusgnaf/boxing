@@ -7,7 +7,7 @@ volumes:
 services:
 <%- if has?('pg') -%>
   postgres:
-    image: postgres:13.1
+    image: postgres:15.4
     volumes:
       - database:/var/lib/postgresql/data
     environment:
